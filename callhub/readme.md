@@ -1,18 +1,17 @@
-# CallHub – Module B: API Development, RBAC & Database Optimisation
+# CallHub — Institutional Phone Directory System
 
-## Project Overview
-CallHub is a Phone Directory Management System for IIT Gandhinagar.
-Module B implements a secure local web application with REST APIs, Role-Based Access Control (RBAC), and SQL indexing optimisation.
+A centralized contact management system built for IIT Gandhinagar to securely store, search, and manage member contact information with role-based access control, SQL indexing optimization, and security audit logging.
 
 ## Tech Stack
-- **Backend:** Python 3 + Flask
-- **Database:** MySQL (via MySQL Workbench)
+
+- **Backend:** Python 3, Flask
+- **Database:** MySQL
 - **Auth:** JWT (JSON Web Tokens)
-- **Frontend:** HTML + CSS + JavaScript
+- **Frontend:** HTML, CSS, JavaScript
 
 ## Project Structure
+## Project Structure
 ```
-Module_B/
 ├── app/
 │   ├── app.py              # Main Flask app + page routes
 │   ├── auth.py             # JWT login/logout/session
@@ -38,11 +37,13 @@ Module_B/
 └── README.md
 ```
 
+
 ## Setup Instructions
 
-### 1. Clone and navigate
+### 1. Clone the repo
 ```bash
-cd Module_B
+git clone https://github.com/gellajayaramakrishna/callhub.git
+cd callhub
 ```
 
 ### 2. Create virtual environment
@@ -58,18 +59,17 @@ pip install -r requirements.txt
 
 ### 4. Set up MySQL database
 - Open MySQL Workbench
-- Run `sql/dump_file.sql` to create database and load sample data
+- Run `sql/dump_file.sql` to create the database and load sample data
 
 ### 5. Update DB credentials
 Edit `app/db.py`:
 ```python
-def get_connection():
-    return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="your_password",
-        database="CallHub"
-    )
+LOCAL_CONFIG = {
+    "host": "localhost",
+    "user": "root",
+    "password": "your_password_here",
+    "database": "CallHub"
+}
 ```
 
 ### 6. Run the app
@@ -77,12 +77,11 @@ def get_connection():
 cd app
 python app.py
 ```
-
 Visit: `http://127.0.0.1:5000`
 
-## Login Credentials
+## Test Login Credentials
 
-| User | Email | Password | Role |
+| Name | Email | Password | Role |
 |------|-------|----------|------|
 | Rohit Das | rohit@org.in | 9000000009 | Director (Admin) |
 | Pooja Singh | pooja@org.in | 9000000008 | HOD (Admin) |
@@ -94,22 +93,21 @@ Visit: `http://127.0.0.1:5000`
 
 | Endpoint | Method | Access | Description |
 |----------|--------|--------|-------------|
-| /login | POST | Public | Login and get JWT token |
-| /isAuth | GET | Public | Verify session token |
-| /logout | POST | Public | Logout |
-| /members | GET | Login | Get all members (paginated) |
-| /members/<id> | GET | Login | Get single member |
-| /members | POST | Admin | Add new member |
-| /members/<id> | PUT | Admin | Update member |
-| /members/<id> | DELETE | Admin | Soft-delete member |
-| /departments | GET | Login | Get all departments |
-| /departments | POST | Admin | Add department |
-| /departments/<id> | PUT | Admin | Update department |
-| /departments/<id> | DELETE | Admin | Delete department |
-| /search | POST | Login | Search directory |
-| /interact | POST | Login | Log interaction |
-| /analytics | GET | Admin | Get analytics |
-| /login-history | GET | Admin | Get login history |
+| `/login` | POST | Public | Login and get JWT token |
+| `/isAuth` | GET | Public | Verify session token |
+| `/logout` | POST | Public | Logout |
+| `/members` | GET | Login | Get all members |
+| `/members/<id>` | GET | Login | Get single member |
+| `/members` | POST | Admin | Add new member |
+| `/members/<id>` | PUT | Admin | Update member |
+| `/members/<id>` | DELETE | Admin | Soft-delete member |
+| `/departments` | GET | Login | Get all departments |
+| `/departments` | POST | Admin | Add department |
+| `/departments/<id>` | PUT | Admin | Update department |
+| `/departments/<id>` | DELETE | Admin | Delete department |
+| `/search` | POST | Login | Search directory |
+| `/analytics` | GET | Admin | Get analytics |
+| `/login-history` | GET | Admin | Get login history |
 
 ## RBAC Roles
 
@@ -121,17 +119,9 @@ Visit: `http://127.0.0.1:5000`
 - Read-only access to directory
 - Search and view profiles only
 
-## Running the Benchmark
-```bash
-cd Module_B
-source venv/bin/activate
-python scripts/benchmark.py
-```
-Results saved to `benchmark_results.txt`
+## Security
 
-## Security Logging
-All admin actions are logged to:
-- `logs/audit.log` (file)
-- `Audit_Log` table (database)
-
-Unauthorised access attempts are also flagged in `audit.log`.
+- JWT tokens expire after 2 hours
+- All unauthorized access attempts logged to `logs/audit.log`
+- Login history tracked with IP address and timestamps
+- Input validation on all endpoints
